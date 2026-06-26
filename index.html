@@ -46,8 +46,8 @@
    <button id=loadBtn data-i18n=load></button><input id=fileIn type=file accept="image/*,video/*" multiple hidden>
    <button id=saveOne data-i18n=saveOne></button><button id=save class=save data-i18n=saveAll></button></div></div>
  <div class=grp><span class=lbl data-i18n=pset></span><div class=row>
-   <label><span data-i18n=psize></span><input id=psize type=range min=2 max=40 value=3><b id=pv>3</b></label>
-   <label><span data-i18n=colors></span><input id=colors type=range min=2 max=64 value=30><b id=cvv>30</b></label>
+   <label><span data-i18n=psize></span><input id=psize type=range min=2 max=40 value=4><b id=pv>4</b></label>
+   <label><span data-i18n=colors></span><input id=colors type=range min=2 max=128 value=64><b id=cvv>64</b></label>
    <label><span data-i18n=sat></span><input id=sat type=range min=0.5 max=2 step=0.1 value=1.4><b id=sv>1.4</b></label>
    <label><input id=dither type=checkbox> <span data-i18n=dither></span></label></div></div>
  <div class=grp><span class=lbl data-i18n=view></span><div class=row>
@@ -56,7 +56,7 @@
    <button id=vplay>▶</button><button id=exportBtn class=save data-i18n=vexport></button></div></div>
  <span id=legend style="align-self:center;font-size:11px;opacity:.7" data-i18n=legend></span>
 </div>
-<div id=topbar><span id=statusMsg></span><span id=legend2 data-i18n=tip></span></div>
+<div id=topbar><span><b id=dims style="color:var(--gold)"></b> <span id=statusMsg></span></span><span id=legend2 data-i18n=tip></span></div>
 <div id=main>
  <div id=rail></div>
  <div id=stage>
@@ -80,7 +80,8 @@ const tr=k=>(I18N[LANG]&&I18N[LANG][k]!=null)?I18N[LANG][k]:I18N.en[k];
 const $=id=>document.getElementById(id);
 const mk=(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c;};
 const st=m=>{const e=$('statusMsg');e.textContent=m;};
-let PIXEL=3,COLORS=30,SAT=1.4,DITHER=false,origToggle=false,spaceOrig=false,vidPal=null,vidLUT=null,vidRunning=false;
+function setDims(w,h){$('dims').textContent=(w&&h)?(w+' × '+h+' px'):'';}
+let PIXEL=4,COLORS=64,SAT=1.4,DITHER=false,origToggle=false,spaceOrig=false,vidPal=null,vidLUT=null,vidRunning=false;
 function isOrig(){return origToggle||spaceOrig;}
 function syncOrigBtn(){document.getElementById('origBtn').classList.toggle('on',isOrig());}
 let items=[],cur=-1;
@@ -115,7 +116,7 @@ function render(){const it=CI();if(!it||it.video)return;view.style.display='bloc
  else pixelizeTo(view,it.img,it.img.naturalWidth,it.img.naturalHeight);}
 function showVideoLive(it){$('intro').style.display='none';view.style.display='block';vid.src=it.url;vidPal=null;vid.muted=true;
  vid.play().then(()=>{document.getElementById('vplay').textContent='⏸';}).catch(()=>{document.getElementById('vplay').textContent='▶';});
- if(!vidRunning){vidRunning=true;requestAnimationFrame(videoTick);}}
+ vid.onloadedmetadata=()=>setDims(vid.videoWidth,vid.videoHeight);if(vid.videoWidth)setDims(vid.videoWidth,vid.videoHeight);if(!vidRunning){vidRunning=true;requestAnimationFrame(videoTick);}}
 function ensureVidPal(){if(vidPal||vid.readyState<2)return;const W=vid.videoWidth,H=vid.videoHeight,tw=Math.max(1,Math.min(Math.round(W/PIXEL),480)),th=Math.max(1,Math.round(tw*H/W));const sc=mk(tw,th).getContext('2d');sc.imageSmoothingEnabled=true;sc.drawImage(vid,0,0,tw,th);const d=sc.getImageData(0,0,tw,th).data;if(SAT!==1)applySat(d,SAT);vidPal=quantize(d,COLORS);vidLUT=buildLUT(vidPal);}
 function pixelizeVidFrame(out){const W=vid.videoWidth,H=vid.videoHeight;if(!W||!H)return;const tw=Math.max(1,Math.min(Math.round(W/PIXEL),480)),th=Math.max(1,Math.round(tw*H/W));const s=mk(tw,th),sc=s.getContext('2d');sc.imageSmoothingEnabled=true;sc.drawImage(vid,0,0,tw,th);const id=sc.getImageData(0,0,tw,th),d=id.data;if(SAT!==1)applySat(d,SAT);ensureVidPal();if(vidPal&&vidLUT)applyPaletteLUT(d,vidPal,vidLUT,DITHER,tw,th);sc.putImageData(id,0,0);out.width=W;out.height=H;const oc=out.getContext('2d');oc.imageSmoothingEnabled=false;oc.drawImage(s,0,0,tw,th,0,0,W,H);}
 function videoTick(){const it=CI();if(!it||!it.video){vidRunning=false;return;}if(vid.readyState>=2&&vid.videoWidth){if(isOrig()){view.width=vid.videoWidth;view.height=vid.videoHeight;view.getContext('2d').drawImage(vid,0,0);}else pixelizeVidFrame(view);}requestAnimationFrame(videoTick);}
@@ -130,8 +131,8 @@ function buildRail(){const rail=$('rail');rail.innerHTML='';if(!items.length){ra
   const nm=document.createElement('div');nm.className='n';nm.textContent=it.name;d.appendChild(nm);
   const del=document.createElement('div');del.className='del';del.textContent='✕';del.onclick=e=>{e.stopPropagation();removeItem(i);};d.appendChild(del);
   rail.appendChild(d);});}
-function select(i){cur=i;buildRail();const it=CI();$('exportBtn').style.display=it.video?'':'none';$('vplay').style.display=it.video?'':'none';if(it.video)showVideoLive(it);else render();}
-function removeItem(i){const it=items[i];if(it.url)URL.revokeObjectURL(it.url);items.splice(i,1);if(!items.length){cur=-1;view.style.display='none';$('vidbox').style.display='none';$('intro').style.display='';buildRail();st(tr('empty'));return;}if(i<cur)cur--;if(cur>items.length-1)cur=items.length-1;if(cur<0)cur=0;buildRail();select(cur);}
+function select(i){cur=i;buildRail();const it=CI();$('exportBtn').style.display=it.video?'':'none';$('vplay').style.display=it.video?'':'none';if(it.video){setDims(0,0);showVideoLive(it);}else{setDims(it.img.naturalWidth,it.img.naturalHeight);render();}}
+function removeItem(i){const it=items[i];if(it.url)URL.revokeObjectURL(it.url);items.splice(i,1);if(!items.length){cur=-1;view.style.display='none';$('vidbox').style.display='none';$('intro').style.display='';setDims(0,0);buildRail();st(tr('empty'));return;}if(i<cur)cur--;if(cur>items.length-1)cur=items.length-1;if(cur<0)cur=0;buildRail();select(cur);}
 function addFiles(fs){const arr=[...fs];let pend=arr.length;if(!pend)return;
  arr.forEach(f=>{const isV=f.type.startsWith('video/');
   if(isV){const url=URL.createObjectURL(f),v=document.createElement('video');v.src=url;v.muted=true;v.onloadeddata=()=>{v.currentTime=Math.min(0.1,(v.duration||1)/2);};v.onseeked=()=>{const tw=120,th=Math.round(120*v.videoHeight/v.videoWidth),tc=mk(tw,th);tc.getContext('2d').drawImage(v,0,0,tw,th);items.push({name:f.name,video:true,url,thumb:tc.toDataURL()});if(--pend===0)fin();};v.onerror=()=>{if(--pend===0)fin();};}
