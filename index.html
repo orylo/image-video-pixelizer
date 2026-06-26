@@ -53,7 +53,7 @@
  <div class=grp><span class=lbl data-i18n=view></span><div class=row>
    <button id=origBtn data-i18n=orig></button></div></div>
  <div class=grp><span class=lbl data-i18n=vidg></span><div class=row>
-   <button id=vplay>▶</button><button id=exportBtn class=save data-i18n=vexport></button></div></div>
+   <button id=vplay>▶</button></div></div>
  <span id=legend style="align-self:center;font-size:11px;opacity:.7" data-i18n=legend></span>
 </div>
 <div id=topbar><span><b id=dims style="color:var(--gold)"></b> <span id=statusMsg></span></span><span id=legend2 data-i18n=tip></span></div>
@@ -70,10 +70,10 @@
 </div>
 <script>
 const I18N={
- en:{file:"File",load:"🖼 Load",saveOne:"⬇ Save this",saveAll:"⬇ Save all (zip)",pset:"Pixel settings",psize:"Pixel size",colors:"Colors",sat:"Saturation",dither:"Dither",view:"View",orig:"👁 Original",vidg:"Video",vexport:"🎬 Export pixel video",legend:"images: live · video: select then Export",tip:"Drag images/videos in · adjust settings live",introBody:"Turn images & videos into <b>pixel art</b> — grid-aligned downscale + limited palette.",introSub:"🔒 Everything runs in your browser; nothing is uploaded.<br>Load above or <b>drag files onto this screen</b>.",vhint:"Adjust settings, then press Export (records in real time, with audio).",exporting:"Recording pixel video… (plays in real time)",done:"Done.",saved:"Saved",zipMaking:"Zipping…",empty:"Queue empty — load or drag files."},
- ko:{file:"파일",load:"🖼 불러오기",saveOne:"⬇ 이 장 저장",saveAll:"⬇ 전체 저장(zip)",pset:"픽셀 설정",psize:"픽셀 크기",colors:"색상 수",sat:"채도",dither:"디더",view:"보기",orig:"👁 원본",vidg:"영상",vexport:"🎬 픽셀 영상 내보내기",legend:"이미지=실시간 · 영상=선택 후 내보내기",tip:"이미지/영상 드래그 · 설정 실시간 반영",introBody:"이미지·영상을 <b>픽셀아트</b>로 — 그리드 정렬 축소 + 제한 팔레트.",introSub:"🔒 전부 브라우저에서 처리, 어디에도 업로드 안 됨.<br>위에서 불러오거나 <b>이 화면으로 파일을 끌어다 놓으세요</b>.",vhint:"설정 맞춘 뒤 내보내기 (실시간 녹화·오디오 포함).",exporting:"픽셀 영상 녹화 중… (실시간 재생)",done:"완료.",saved:"저장됨",zipMaking:"zip 생성 중…",empty:"큐가 비었어요 — 불러오거나 끌어다 놓으세요."},
- ja:{file:"ファイル",load:"🖼 読み込み",saveOne:"⬇ この画像保存",saveAll:"⬇ 全て保存(zip)",pset:"ピクセル設定",psize:"ピクセル",colors:"色数",sat:"彩度",dither:"ディザ",view:"表示",orig:"👁 原画",vidg:"動画",vexport:"🎬 ピクセル動画書き出し",legend:"画像=即時 · 動画=選択後 書き出し",tip:"画像/動画をドラッグ · 設定は即反映",introBody:"画像・動画を<b>ピクセルアート</b>に — グリッド縮小+限定パレット。",introSub:"🔒 全てブラウザ内で処理、アップロードなし。<br>上から読み込むか<b>この画面にドラッグ</b>。",vhint:"設定後に書き出し（リアルタイム録画・音声付き）。",exporting:"ピクセル動画を録画中…（リアルタイム再生）",done:"完了。",saved:"保存しました",zipMaking:"zip作成中…",empty:"キューが空です — 読み込むかドラッグ。"},
- zh:{file:"文件",load:"🖼 载入",saveOne:"⬇ 保存本张",saveAll:"⬇ 全部保存(zip)",pset:"像素设置",psize:"像素大小",colors:"颜色数",sat:"饱和度",dither:"抖动",view:"查看",orig:"👁 原图",vidg:"视频",vexport:"🎬 导出像素视频",legend:"图片=实时 · 视频=选择后导出",tip:"拖入图片/视频 · 设置实时生效",introBody:"把图片和视频变成<b>像素艺术</b> — 网格缩小+有限调色板。",introSub:"🔒 全部在你的浏览器中处理，绝不上传。<br>上方载入或<b>拖文件到此界面</b>。",vhint:"调好设置后导出（实时录制，含音频）。",exporting:"正在录制像素视频…（实时播放）",done:"完成。",saved:"已保存",zipMaking:"生成zip中…",empty:"队列为空 — 载入或拖入。"}
+ en:{file:"File",load:"🖼 Load",saveOne:"⬇ Save this",saveAll:"⬇ Save all (zip)",pset:"Pixel settings",psize:"Pixel size",colors:"Colors",sat:"Saturation",dither:"Dither",view:"View",orig:"👁 Original",vidg:"Video",vexport:"🎬 Export pixel video",legend:"Save this / Save all — images & videos together",tip:"Drag images/videos in · adjust settings live",introBody:"Turn images & videos into <b>pixel art</b> — grid-aligned downscale + limited palette.",introSub:"🔒 Everything runs in your browser; nothing is uploaded.<br>Load above or <b>drag files onto this screen</b>.",vhint:"Adjust settings, then press Export (records in real time, with audio).",exporting:"Recording pixel video… (plays in real time)",done:"Done.",saved:"Saved",zipMaking:"Zipping…",empty:"Queue empty — load or drag files."},
+ ko:{file:"파일",load:"🖼 불러오기",saveOne:"⬇ 이 장 저장",saveAll:"⬇ 전체 저장(zip)",pset:"픽셀 설정",psize:"픽셀 크기",colors:"색상 수",sat:"채도",dither:"디더",view:"보기",orig:"👁 원본",vidg:"영상",vexport:"🎬 픽셀 영상 내보내기",legend:"이 장 저장 / 전체 저장 — 이미지·영상 함께",tip:"이미지/영상 드래그 · 설정 실시간 반영",introBody:"이미지·영상을 <b>픽셀아트</b>로 — 그리드 정렬 축소 + 제한 팔레트.",introSub:"🔒 전부 브라우저에서 처리, 어디에도 업로드 안 됨.<br>위에서 불러오거나 <b>이 화면으로 파일을 끌어다 놓으세요</b>.",vhint:"설정 맞춘 뒤 내보내기 (실시간 녹화·오디오 포함).",exporting:"픽셀 영상 녹화 중… (실시간 재생)",done:"완료.",saved:"저장됨",zipMaking:"zip 생성 중…",empty:"큐가 비었어요 — 불러오거나 끌어다 놓으세요."},
+ ja:{file:"ファイル",load:"🖼 読み込み",saveOne:"⬇ この画像保存",saveAll:"⬇ 全て保存(zip)",pset:"ピクセル設定",psize:"ピクセル",colors:"色数",sat:"彩度",dither:"ディザ",view:"表示",orig:"👁 原画",vidg:"動画",vexport:"🎬 ピクセル動画書き出し",legend:"この1枚保存 / 全部保存 — 画像も動画も",tip:"画像/動画をドラッグ · 設定は即反映",introBody:"画像・動画を<b>ピクセルアート</b>に — グリッド縮小+限定パレット。",introSub:"🔒 全てブラウザ内で処理、アップロードなし。<br>上から読み込むか<b>この画面にドラッグ</b>。",vhint:"設定後に書き出し（リアルタイム録画・音声付き）。",exporting:"ピクセル動画を録画中…（リアルタイム再生）",done:"完了。",saved:"保存しました",zipMaking:"zip作成中…",empty:"キューが空です — 読み込むかドラッグ。"},
+ zh:{file:"文件",load:"🖼 载入",saveOne:"⬇ 保存本张",saveAll:"⬇ 全部保存(zip)",pset:"像素设置",psize:"像素大小",colors:"颜色数",sat:"饱和度",dither:"抖动",view:"查看",orig:"👁 原图",vidg:"视频",vexport:"🎬 导出像素视频",legend:"保存当前 / 全部保存 — 图片与视频",tip:"拖入图片/视频 · 设置实时生效",introBody:"把图片和视频变成<b>像素艺术</b> — 网格缩小+有限调色板。",introSub:"🔒 全部在你的浏览器中处理，绝不上传。<br>上方载入或<b>拖文件到此界面</b>。",vhint:"调好设置后导出（实时录制，含音频）。",exporting:"正在录制像素视频…（实时播放）",done:"完成。",saved:"已保存",zipMaking:"生成zip中…",empty:"队列为空 — 载入或拖入。"}
 };
 let LANG=(localStorage.getItem('pxl_lang'))||'en';
 const tr=k=>(I18N[LANG]&&I18N[LANG][k]!=null)?I18N[LANG][k]:I18N.en[k];
@@ -132,7 +132,7 @@ function buildRail(){const rail=$('rail');rail.innerHTML='';if(!items.length){ra
   const nm=document.createElement('div');nm.className='n';nm.textContent=it.name;d.appendChild(nm);
   const del=document.createElement('div');del.className='del';del.textContent='✕';del.onclick=e=>{e.stopPropagation();removeItem(i);};d.appendChild(del);
   rail.appendChild(d);});}
-function select(i){cur=i;buildRail();const it=CI();$('exportBtn').style.display=it.video?'':'none';$('vplay').style.display=it.video?'':'none';if(it.video){setDims(0,0);showVideoLive(it);}else{setDims(it.img.naturalWidth,it.img.naturalHeight);render();}}
+function select(i){cur=i;buildRail();const it=CI();$('vplay').style.display=it.video?'':'none';if(it.video){setDims(0,0);showVideoLive(it);}else{setDims(it.img.naturalWidth,it.img.naturalHeight);render();}}
 function removeItem(i){const it=items[i];if(it.url)URL.revokeObjectURL(it.url);items.splice(i,1);if(!items.length){cur=-1;view.style.display='none';$('vidbox').style.display='none';$('intro').style.display='';setDims(0,0);buildRail();st(tr('empty'));return;}if(i<cur)cur--;if(cur>items.length-1)cur=items.length-1;if(cur<0)cur=0;buildRail();select(cur);}
 function addFiles(fs){const arr=[...fs];let pend=arr.length;if(!pend)return;
  arr.forEach(f=>{const isV=f.type.startsWith('video/');
@@ -152,27 +152,42 @@ $('origBtn').onclick=()=>{origToggle=!origToggle;syncOrigBtn();render();};
 
 /* ---------- 저장(이미지) ---------- */
 function renderFull(it){const o=mk(1,1);pixelizeTo(o,it.img,it.img.naturalWidth,it.img.naturalHeight);return o;}
-$('saveOne').onclick=()=>{const it=CI();if(!it||it.video)return;renderFull(it).toBlob(b=>{const a=document.createElement('a');a.download=it.name.replace(/\.[^.]+$/,'')+'_PIXEL.png';a.href=URL.createObjectURL(b);a.click();},'image/png');st(tr('saved'));};
-$('save').onclick=async()=>{const imgs=items.filter(x=>!x.video);if(!imgs.length)return;st(tr('zipMaking'));const zip=new JSZip();for(const it of imgs){const b=await new Promise(r=>renderFull(it).toBlob(r,'image/png'));zip.file(it.name.replace(/\.[^.]+$/,'')+'_PIXEL.png',b);}const out=await zip.generateAsync({type:'blob'});const a=document.createElement('a');a.download='pixelized.zip';a.href=URL.createObjectURL(out);a.click();st(tr('done'));};
+$('saveOne').onclick=async()=>{const it=CI();if(!it)return;
+ if(it.video){setSpin(true,tr('exporting'));try{const b=await recordVideo(it);dlBlob(b,baseName(it.name)+'.webm');}catch(e){}setSpin(false);st(tr('done'));}
+ else{renderFull(it).toBlob(b=>dlBlob(b,baseName(it.name)+'.png'),'image/png');st(tr('saved'));}};
+$('save').onclick=async()=>{if(!items.length)return;const zip=new JSZip();const N=items.length;
+ for(let i=0;i<N;i++){const it=items[i];const tag=' ('+(i+1)+'/'+N+')';
+  if(it.video){setSpin(true,tr('exporting')+tag);try{const b=await recordVideo(it);zip.file(baseName(it.name)+'.webm',b);}catch(e){}}
+  else{setSpin(true,tr('zipMaking')+tag);const b=await new Promise(r=>renderFull(it).toBlob(r,'image/png'));zip.file(baseName(it.name)+'.png',b);}}
+ setSpin(true,tr('zipMaking'));const out=await zip.generateAsync({type:'blob'});dlBlob(out,'pixelized.zip');setSpin(false);st(tr('done'));};
 
 /* ---------- 영상 내보내기(실시간 녹화) ---------- */
-$('exportBtn').onclick=async()=>{const it=CI();if(!it||!it.video)return;
- origToggle=false;spaceOrig=false;syncOrigBtn();   // 원본보기 끄고 픽셀 캔버스 녹화
- const cs=view.captureStream(30);                   // 라이브 픽셀 캔버스(LUT로 실시간) 녹화
- try{const vs=vid.captureStream?vid.captureStream():(vid.mozCaptureStream?vid.mozCaptureStream():null);if(vs)vs.getAudioTracks().forEach(t=>cs.addTrack(t));}catch(e){}
- let mime='video/webm;codecs=vp9';if(!MediaRecorder.isTypeSupported(mime))mime='video/webm';
- const rec=new MediaRecorder(cs,{mimeType:mime,videoBitsPerSecond:8e6}),chunks=[];
- rec.ondataavailable=e=>{if(e.data.size)chunks.push(e.data);};
- let stopped=false;const finish=()=>{if(stopped)return;stopped=true;try{rec.stop();}catch(e){}};
- rec.onstop=()=>{vid.loop=true;vid.pause();const blob=new Blob(chunks,{type:'video/webm'});const a=document.createElement('a');a.download=it.name.replace(/\.[^.]+$/,'')+'_PIXEL.webm';a.href=URL.createObjectURL(blob);a.click();setSpin(false);$('exportBtn').disabled=false;$('vplay').disabled=false;$('vplay').textContent='▶';st(tr('done'));};
- setSpin(true,tr('exporting'));$('exportBtn').disabled=true;$('vplay').disabled=true;vid.muted=true;vid.loop=false;vid.currentTime=0;await vid.play();rec.start();
- vid.onended=finish;};
+function recordVideo(it,onstart){return new Promise((resolve,reject)=>{
+ const v=document.createElement('video');v.muted=true;v.playsInline=true;v.src=it.url;
+ v.onloadeddata=async()=>{const W=v.videoWidth,H=v.videoHeight;if(!W||!H){reject(new Error('no video'));return;}
+  const tw=Math.max(1,Math.min(Math.round(W/PIXEL),480)),th=Math.max(1,Math.round(tw*H/W));
+  const s2=mk(tw,th),sc=s2.getContext('2d'),out=mk(W,H),oc=out.getContext('2d');oc.imageSmoothingEnabled=false;
+  let pal=null,lut=null;
+  const draw=()=>{sc.imageSmoothingEnabled=true;sc.drawImage(v,0,0,tw,th);const id=sc.getImageData(0,0,tw,th),d=id.data;if(SAT!==1)applySat(d,SAT);if(!pal){pal=quantize(d,COLORS);lut=buildLUT(pal);}applyPaletteLUT(d,pal,lut,DITHER,tw,th);sc.putImageData(id,0,0);oc.drawImage(s2,0,0,tw,th,0,0,W,H);};
+  const cs=out.captureStream(30);try{const vs=v.captureStream?v.captureStream():(v.mozCaptureStream?v.mozCaptureStream():null);if(vs)vs.getAudioTracks().forEach(t=>cs.addTrack(t));}catch(e){}
+  let mime='video/webm;codecs=vp9';if(!MediaRecorder.isTypeSupported(mime))mime='video/webm';
+  const rec=new MediaRecorder(cs,{mimeType:mime,videoBitsPerSecond:8e6}),chunks=[];rec.ondataavailable=e=>{if(e.data.size)chunks.push(e.data);};
+  let stopped=false;const fin=()=>{if(stopped)return;stopped=true;try{rec.stop();}catch(e){}};
+  rec.onstop=()=>{resolve(new Blob(chunks,{type:'video/webm'}));};
+  v.currentTime=0;try{await v.play();}catch(e){}if(onstart)onstart(W,H);rec.start();
+  const loop=()=>{if(v.ended){fin();return;}draw();if(v.requestVideoFrameCallback)v.requestVideoFrameCallback(loop);else setTimeout(loop,33);};
+  if(v.requestVideoFrameCallback)v.requestVideoFrameCallback(loop);else loop();
+  v.onended=fin;};
+ v.onerror=()=>reject(new Error('video load fail'));
+});}
+function dlBlob(b,name){const a=document.createElement('a');a.download=name;a.href=URL.createObjectURL(b);a.click();}
+function baseName(n){return n.replace(/\.[^.]+$/,'')+'_PIXEL';}
 function setSpin(on,txt){$('spinner').style.display=on?'flex':'none';if(txt)$('spinText').textContent=txt;}
 
 /* ---------- 언어 ---------- */
 function applyLang(){document.documentElement.lang=LANG;document.querySelectorAll('[data-i18n]').forEach(e=>e.innerHTML=tr(e.dataset.i18n));buildRail();}
 $('lang').value=LANG;$('lang').onchange=e=>{LANG=e.target.value;try{localStorage.setItem('pxl_lang',LANG);}catch(_){}applyLang();};
-$('exportBtn').style.display='none';$('vplay').style.display='none';
+$('vplay').style.display='none';
 addEventListener('keydown',e=>{ if(e.target.tagName==='INPUT'&&e.target.type==='range')return;
  if(e.code==='Space'){e.preventDefault();if(!spaceOrig){spaceOrig=true;syncOrigBtn();render();}return;}
  if(e.code==='ArrowLeft'){if(cur>0)select(cur-1);}
