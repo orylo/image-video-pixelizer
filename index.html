@@ -46,14 +46,14 @@
    <button id=loadBtn data-i18n=load></button><input id=fileIn type=file accept="image/*,video/*" multiple hidden>
    <button id=saveOne data-i18n=saveOne></button><button id=save class=save data-i18n=saveAll></button></div></div>
  <div class=grp><span class=lbl data-i18n=pset></span><div class=row>
-   <label><span data-i18n=psize></span><input id=psize type=range min=2 max=40 value=8><b id=pv>8</b></label>
-   <label><span data-i18n=colors></span><input id=colors type=range min=2 max=64 value=24><b id=cvv>24</b></label>
-   <label><span data-i18n=sat></span><input id=sat type=range min=0.5 max=2 step=0.1 value=1.2><b id=sv>1.2</b></label>
+   <label><span data-i18n=psize></span><input id=psize type=range min=2 max=40 value=3><b id=pv>3</b></label>
+   <label><span data-i18n=colors></span><input id=colors type=range min=2 max=64 value=30><b id=cvv>30</b></label>
+   <label><span data-i18n=sat></span><input id=sat type=range min=0.5 max=2 step=0.1 value=1.4><b id=sv>1.4</b></label>
    <label><input id=dither type=checkbox> <span data-i18n=dither></span></label></div></div>
  <div class=grp><span class=lbl data-i18n=view></span><div class=row>
    <button id=origBtn data-i18n=orig></button></div></div>
  <div class=grp><span class=lbl data-i18n=vidg></span><div class=row>
-   <button id=exportBtn class=save data-i18n=vexport></button></div></div>
+   <button id=vplay>▶</button><button id=exportBtn class=save data-i18n=vexport></button></div></div>
  <span id=legend style="align-self:center;font-size:11px;opacity:.7" data-i18n=legend></span>
 </div>
 <div id=topbar><span id=statusMsg></span><span id=legend2 data-i18n=tip></span></div>
@@ -64,7 +64,7 @@
      <div data-i18n=introBody></div>
      <div class=sub data-i18n=introSub></div></div>
    <canvas id=view width=480 height=320 style="display:none"></canvas>
-   <div id=vidbox><video id=vid controls muted loop></video><div id=vhint data-i18n=vhint style="font-size:12px;opacity:.7"></div></div>
+   <video id=vid muted loop playsinline style="display:none"></video>
    <div id=spinner><div class=sp></div><span id=spinText></span></div>
  </div>
 </div>
@@ -80,7 +80,9 @@ const tr=k=>(I18N[LANG]&&I18N[LANG][k]!=null)?I18N[LANG][k]:I18N.en[k];
 const $=id=>document.getElementById(id);
 const mk=(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c;};
 const st=m=>{const e=$('statusMsg');e.textContent=m;};
-let PIXEL=8,COLORS=24,SAT=1.2,DITHER=false,origView=false;
+let PIXEL=3,COLORS=30,SAT=1.4,DITHER=false,origToggle=false,spaceOrig=false,vidPal=null,vidRunning=false;
+function isOrig(){return origToggle||spaceOrig;}
+function syncOrigBtn(){document.getElementById('origBtn').classList.toggle('on',isOrig());}
 let items=[],cur=-1;
 const view=$('view'),vx=view.getContext('2d'),vid=$('vid');
 
@@ -104,10 +106,15 @@ function pixelizeTo(out,src,W,H){const tw=Math.max(1,Math.round(W/PIXEL)),th=Mat
 
 /* ---------- 렌더(이미지) ---------- */
 const CI=()=>items[cur];
-function render(){const it=CI();if(!it||it.video)return;view.style.display='block';$('vidbox').style.display='none';$('intro').style.display='none';
- if(origView){view.width=it.img.naturalWidth;view.height=it.img.naturalHeight;view.getContext('2d').drawImage(it.img,0,0);}
+function render(){const it=CI();if(!it||it.video)return;view.style.display='block';$('intro').style.display='none';
+ if(isOrig()){view.width=it.img.naturalWidth;view.height=it.img.naturalHeight;view.getContext('2d').drawImage(it.img,0,0);}
  else pixelizeTo(view,it.img,it.img.naturalWidth,it.img.naturalHeight);}
-function showVideo(it){view.style.display='none';$('intro').style.display='none';$('vidbox').style.display='flex';vid.src=it.url;vid.style.display='block';}
+function showVideoLive(it){$('intro').style.display='none';view.style.display='block';vid.src=it.url;vid.currentTime=0;vidPal=null;document.getElementById('vplay').textContent='▶';if(!vidRunning){vidRunning=true;requestAnimationFrame(videoTick);}}
+function ensureVidPal(){if(vidPal||vid.readyState<2)return;const W=vid.videoWidth,H=vid.videoHeight,tw=Math.max(1,Math.min(Math.round(W/PIXEL),480)),th=Math.max(1,Math.round(tw*H/W));const sc=mk(tw,th).getContext('2d');sc.imageSmoothingEnabled=true;sc.drawImage(vid,0,0,tw,th);const d=sc.getImageData(0,0,tw,th).data;if(SAT!==1)applySat(d,SAT);vidPal=quantize(d,COLORS);}
+function pixelizeVidFrame(out){const W=vid.videoWidth,H=vid.videoHeight,tw=Math.max(1,Math.min(Math.round(W/PIXEL),480)),th=Math.max(1,Math.round(tw*H/W));const s=mk(tw,th),sc=s.getContext('2d');sc.imageSmoothingEnabled=true;sc.drawImage(vid,0,0,tw,th);const id=sc.getImageData(0,0,tw,th),d=id.data;if(SAT!==1)applySat(d,SAT);ensureVidPal();applyPalette(d,vidPal,DITHER,tw,th);sc.putImageData(id,0,0);out.width=W;out.height=H;const oc=out.getContext('2d');oc.imageSmoothingEnabled=false;oc.drawImage(s,0,0,tw,th,0,0,W,H);}
+function videoTick(){const it=CI();if(!it||!it.video){vidRunning=false;return;}if(vid.readyState>=2){if(isOrig()){view.width=vid.videoWidth;view.height=vid.videoHeight;view.getContext('2d').drawImage(vid,0,0);}else pixelizeVidFrame(view);}requestAnimationFrame(videoTick);}
+document.addEventListener('DOMContentLoaded',()=>{});
+document.getElementById('vplay').onclick=()=>{if(vid.paused){vid.play();document.getElementById('vplay').textContent='⏸';}else{vid.pause();document.getElementById('vplay').textContent='▶';}};
 
 /* ---------- 큐 ---------- */
 function buildRail(){const rail=$('rail');rail.innerHTML='';if(!items.length){rail.innerHTML='<div class=railhint>🖼🎬<br>'+tr('empty')+'</div>';return;}
@@ -117,7 +124,7 @@ function buildRail(){const rail=$('rail');rail.innerHTML='';if(!items.length){ra
   const nm=document.createElement('div');nm.className='n';nm.textContent=it.name;d.appendChild(nm);
   const del=document.createElement('div');del.className='del';del.textContent='✕';del.onclick=e=>{e.stopPropagation();removeItem(i);};d.appendChild(del);
   rail.appendChild(d);});}
-function select(i){cur=i;buildRail();const it=CI();$('exportBtn').style.display=it.video?'':'none';if(it.video)showVideo(it);else render();}
+function select(i){cur=i;buildRail();const it=CI();$('exportBtn').style.display=it.video?'':'none';$('vplay').style.display=it.video?'':'none';if(it.video)showVideoLive(it);else render();}
 function removeItem(i){const it=items[i];if(it.url)URL.revokeObjectURL(it.url);items.splice(i,1);if(!items.length){cur=-1;view.style.display='none';$('vidbox').style.display='none';$('intro').style.display='';buildRail();st(tr('empty'));return;}if(i<cur)cur--;if(cur>items.length-1)cur=items.length-1;if(cur<0)cur=0;buildRail();select(cur);}
 function addFiles(fs){const arr=[...fs];let pend=arr.length;if(!pend)return;
  arr.forEach(f=>{const isV=f.type.startsWith('video/');
@@ -129,11 +136,11 @@ $('loadBtn').onclick=()=>$('fileIn').click();
 {const dz=$('main');['dragenter','dragover'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.add('drag');}));['dragleave','drop'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.remove('drag');}));dz.addEventListener('drop',e=>{const fs=[...(e.dataTransfer?e.dataTransfer.files:[])].filter(f=>f.type.startsWith('image/')||f.type.startsWith('video/'));if(fs.length)addFiles(fs);});}
 
 /* ---------- 컨트롤 ---------- */
-$('psize').oninput=e=>{PIXEL=+e.target.value;$('pv').textContent=e.target.value;render();};
-$('colors').oninput=e=>{COLORS=+e.target.value;$('cvv').textContent=e.target.value;render();};
-$('sat').oninput=e=>{SAT=+e.target.value;$('sv').textContent=e.target.value;render();};
-$('dither').onchange=e=>{DITHER=e.target.checked;render();};
-$('origBtn').onclick=()=>{origView=!origView;$('origBtn').classList.toggle('on',origView);render();};
+$('psize').oninput=e=>{PIXEL=+e.target.value;$('pv').textContent=e.target.value;vidPal=null;render();};
+$('colors').oninput=e=>{COLORS=+e.target.value;$('cvv').textContent=e.target.value;vidPal=null;render();};
+$('sat').oninput=e=>{SAT=+e.target.value;$('sv').textContent=e.target.value;vidPal=null;render();};
+$('dither').onchange=e=>{DITHER=e.target.checked;vidPal=null;render();};
+$('origBtn').onclick=()=>{origToggle=!origToggle;syncOrigBtn();render();};
 
 /* ---------- 저장(이미지) ---------- */
 function renderFull(it){const o=mk(1,1);pixelizeTo(o,it.img,it.img.naturalWidth,it.img.naturalHeight);return o;}
@@ -159,7 +166,12 @@ function setSpin(on,txt){$('spinner').style.display=on?'flex':'none';if(txt)$('s
 /* ---------- 언어 ---------- */
 function applyLang(){document.documentElement.lang=LANG;document.querySelectorAll('[data-i18n]').forEach(e=>e.innerHTML=tr(e.dataset.i18n));buildRail();}
 $('lang').value=LANG;$('lang').onchange=e=>{LANG=e.target.value;try{localStorage.setItem('pxl_lang',LANG);}catch(_){}applyLang();};
-$('exportBtn').style.display='none';
+$('exportBtn').style.display='none';$('vplay').style.display='none';
+addEventListener('keydown',e=>{ if(e.target.tagName==='INPUT'&&e.target.type==='range')return;
+ if(e.code==='Space'){e.preventDefault();if(!spaceOrig){spaceOrig=true;syncOrigBtn();render();}return;}
+ if(e.code==='ArrowLeft'){if(cur>0)select(cur-1);}
+ else if(e.code==='ArrowRight'){if(cur<items.length-1)select(cur+1);}});
+addEventListener('keyup',e=>{if(e.code==='Space'){spaceOrig=false;syncOrigBtn();render();}});
 applyLang();
 </script>
 </body></html>
